@@ -1,63 +1,63 @@
-class TipoHabitacion:
-    def __init__(self, codigo, tipo, precio, disponibles):
+class Producto:
+    def __init__(self, codigo, nombre, precio, stock):
         self.codigo = codigo
-        self.tipo = tipo
+        self.nombre = nombre
         self.precio = precio
-        self.disponibles = disponibles
+        self.stock = stock
 
     def validar(self):
         if self.codigo <= 0:
             return False, "El código debe ser mayor que cero."
-        if not self.tipo or not self.tipo.strip():
-            return False, "El tipo de habitación no puede estar vacío."
+        if not self.nombre or not self.nombre.strip():
+            return False, "El nombre del producto no puede estar vacío."
         if self.precio <= 0:
             return False, "El precio debe ser mayor que cero."
-        if self.disponibles < 0:
-            return False, "Las habitaciones disponibles no pueden ser negativas."
+        if self.stock < 0:
+            return False, "El stock no puede ser negativo."
         return True, ""
 
-    def reservar(self, cantidad):
+    def vender(self, cantidad):
         if cantidad <= 0:
-            return False, "La cantidad debe ser mayor que cero."
-        if cantidad > self.disponibles:
-            return False, f"Error: solo hay {self.disponibles} habitaciones."
-        self.disponibles -= cantidad
-        return True, f"Listo. Quedan {self.disponibles} habitaciones."
+            return False, "Error: la cantidad debe ser mayor que cero."
+        if cantidad > self.stock:
+            return False, f"Error: solo hay {self.stock} unidades."
+        self.stock -= cantidad
+        return True, f"Listo. Quedan {self.stock} unidades."
 
     def __str__(self):
         return (
-            f"{self.codigo:<8} | {self.tipo:<15} | "
-            f"{self.precio:>10.2f} | {self.disponibles:>11}"
+            f"{self.codigo:<8} | {self.nombre:<15} | "
+            f"{self.precio:>10.2f} | {self.stock:>10}"
         )
 
 
-class GestorHabitaciones:
+class GestorProductos:
     def __init__(self):
-        self.habitaciones = [
-            TipoHabitacion(1, "Simple", 35.00, 10),
-            TipoHabitacion(2, "Doble", 55.00, 8),
+        self.productos = [
+            Producto(1, "Arroz", 1.25, 40),
+            Producto(2, "Aceite", 3.10, 15),
         ]
 
     def listar(self):
-        return self.habitaciones
+        return self.productos
 
     def buscar(self, codigo):
-        for habitacion in self.habitaciones:
-            if habitacion.codigo == codigo:
-                return habitacion
+        for producto in self.productos:
+            if producto.codigo == codigo:
+                return producto
         return None
 
-    def registrar(self, tipo, precio, disponibles):
-        nuevo_codigo = len(self.habitaciones) + 1
-        nueva = TipoHabitacion(nuevo_codigo, tipo.strip(), precio, disponibles)
-        valido, mensaje = nueva.validar()
+    def registrar(self, nombre, precio, stock):
+        nuevo_codigo = len(self.productos) + 1
+        nuevo = Producto(nuevo_codigo, nombre.strip(), precio, stock)
+        valido, mensaje = nuevo.validar()
         if not valido:
             return False, mensaje
-        self.habitaciones.append(nueva)
+        self.productos.append(nuevo)
         return True, f"Registrado con el código {nuevo_codigo}."
 
-    def operar_reserva(self, codigo, cantidad):
-        habitacion = self.buscar(codigo)
-        if habitacion is None:
+    def operar_venta(self, codigo, cantidad):
+        producto = self.buscar(codigo)
+        if producto is None:
             return False, "Error: no existe ese código."
-        return habitacion.reservar(cantidad)
+        return producto.vender(cantidad)
