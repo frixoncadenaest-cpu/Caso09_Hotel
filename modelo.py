@@ -1,37 +1,28 @@
 class TipoHabitacion:
     def __init__(self, codigo, tipo, precio, disponibles):
-        self.codigo = self._validar_codigo(codigo)
-        self.tipo = self._validar_tipo(tipo)
-        self.precio = self._validar_precio(precio)
-        self.disponibles = self._validar_disponibles(disponibles)
+        self.codigo = codigo
+        self.tipo = tipo
+        self.precio = precio
+        self.disponibles = disponibles
 
-    def _validar_codigo(self, codigo):
-        if codigo <= 0:
-            raise ValueError("El código debe ser mayor que cero.")
-        return codigo
-
-    def _validar_tipo(self, tipo):
-        if not tipo or not tipo.strip():
-            raise ValueError("El tipo de habitación no puede estar vacío.")
-        return tipo.strip()
-
-    def _validar_precio(self, precio):
-        if precio <= 0:
-            raise ValueError("El precio debe ser mayor que cero.")
-        return float(precio)
-
-    def _validar_disponibles(self, disponibles):
-        if disponibles < 0:
-            raise ValueError("Las habitaciones disponibles no pueden ser negativas.")
-        return disponibles
+    def validar(self):
+        if self.codigo <= 0:
+            return False, "El código debe ser mayor que cero."
+        if not self.tipo or not self.tipo.strip():
+            return False, "El tipo de habitación no puede estar vacío."
+        if self.precio <= 0:
+            return False, "El precio debe ser mayor que cero."
+        if self.disponibles < 0:
+            return False, "Las habitaciones disponibles no pueden ser negativas."
+        return True, ""
 
     def reservar(self, cantidad):
         if cantidad <= 0:
-            raise ValueError("La cantidad debe ser mayor que cero.")
+            return False, "La cantidad debe ser mayor que cero."
         if cantidad > self.disponibles:
-            raise ValueError(f"Error: solo hay {self.disponibles} habitaciones.")
+            return False, f"Error: solo hay {self.disponibles} habitaciones."
         self.disponibles -= cantidad
-        return True
+        return True, f"Listo. Quedan {self.disponibles} habitaciones."
 
     def __str__(self):
         return (
@@ -54,15 +45,19 @@ class GestorHabitaciones:
         for habitacion in self.habitaciones:
             if habitacion.codigo == codigo:
                 return habitacion
-        raise ValueError("Error: no existe ese código.")
+        return None
 
     def registrar(self, tipo, precio, disponibles):
         nuevo_codigo = len(self.habitaciones) + 1
-        nueva_habitacion = TipoHabitacion(nuevo_codigo, tipo, precio, disponibles)
-        self.habitaciones.append(nueva_habitacion)
-        return nueva_habitacion
+        nueva = TipoHabitacion(nuevo_codigo, tipo.strip(), precio, disponibles)
+        valido, mensaje = nueva.validar()
+        if not valido:
+            return False, mensaje
+        self.habitaciones.append(nueva)
+        return True, f"Registrado con el código {nuevo_codigo}."
 
     def operar_reserva(self, codigo, cantidad):
         habitacion = self.buscar(codigo)
-        habitacion.reservar(cantidad)
-        return habitacion
+        if habitacion is None:
+            return False, "Error: no existe ese código."
+        return habitacion.reservar(cantidad)

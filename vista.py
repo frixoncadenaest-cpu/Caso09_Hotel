@@ -26,11 +26,5 @@ class VistaHotel:
         for habitacion in habitaciones:
             print(habitacion)
 
-    def mostrar_registro_exitoso(self, codigo):
-        print(f"Registrado con el código {codigo}.")
-
-    def mostrar_reserva_exitosa(self, restantes):
-        print(f"Listo. Quedan {restantes} habitaciones.")
-
     def mostrar_mensaje(self, mensaje):
         print(mensaje)

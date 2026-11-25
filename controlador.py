@@ -1,7 +1,3 @@
-from modelo import GestorHabitaciones
-from vista import VistaHotel
-
-
 class ControladorHotel:
     def __init__(self, modelo, vista):
         self.modelo = modelo
@@ -24,25 +20,29 @@ class ControladorHotel:
                 self.vista.mostrar_mensaje("Opción no válida")
 
     def _opcion_registrar(self):
+        tipo, precio_texto, disp_texto = self.vista.pedir_datos_registro()
         try:
-            tipo, precio_texto, disp_texto = self.vista.pedir_datos_registro()
             precio = float(precio_texto)
             disponibles = int(disp_texto)
-            habitacion = self.modelo.registrar(tipo, precio, disponibles)
-            self.vista.mostrar_registro_exitoso(habitacion.codigo)
-        except ValueError as error:
-            self.vista.mostrar_mensaje(str(error))
+        except ValueError:
+            self.vista.mostrar_mensaje("Error: ingrese valores numéricos válidos.")
+            return
+
+        ok, mensaje = self.modelo.registrar(tipo, precio, disponibles)
+        self.vista.mostrar_mensaje(mensaje)
 
     def _opcion_mostrar(self):
         habitaciones = self.modelo.listar()
         self.vista.mostrar_habitaciones(habitaciones)
 
     def _opcion_reservar(self):
+        codigo_texto, cantidad_texto = self.vista.pedir_datos_reserva()
         try:
-            codigo_texto, cantidad_texto = self.vista.pedir_datos_reserva()
             codigo = int(codigo_texto)
             cantidad = int(cantidad_texto)
-            habitacion = self.modelo.operar_reserva(codigo, cantidad)
-            self.vista.mostrar_reserva_exitosa(habitacion.disponibles)
-        except ValueError as error:
-            self.vista.mostrar_mensaje(str(error))
+        except ValueError:
+            self.vista.mostrar_mensaje("Error: ingrese números enteros válidos.")
+            return
+
+        ok, mensaje = self.modelo.operar_reserva(codigo, cantidad)
+        self.vista.mostrar_mensaje(mensaje)
