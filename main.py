@@ -1,4 +1,4 @@
-from modelo import *
+from modelo import GestorProductos
 from vista import VistaTienda
 from controlador import ControladorTienda
 

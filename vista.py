@@ -5,6 +5,7 @@ class VistaTienda:
         print("2. Mostrar productos")
         print("3. Vender producto")
         print("4. Salir")
+        return self.pedir_opcion()
 
     def pedir_opcion(self):
         return input("Seleccione una opción: ").strip()
@@ -19,6 +20,12 @@ class VistaTienda:
         codigo = input("Ingrese el código del producto: ")
         cantidad = input("Ingrese la cantidad a vender: ")
         return codigo, cantidad
+
+    def mensaje(self, mensaje):
+        print(mensaje)
+
+    def error(self, mensaje):
+        print(mensaje)
 
     def mostrar_productos(self, productos):
         print("\nCódigo   | Nombre          | Precio     | Stock")
